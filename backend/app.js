@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 // MySQL connection setup
 const connection = mysql.createConnection({
-  host: 'mysql-server', //ovde staviti naziv mysql servera u mrezi
+  host: 'baza-db', //ovde staviti naziv mysql servera u mrezi
   user: 'student', 
   password: 'student',
   database: 'university'
