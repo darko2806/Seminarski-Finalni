@@ -1,0 +1,51 @@
+name: "seminarski-app"
+services:
+  mysql: 
+    image: mysql
+    container_name: baza-db
+    env_file:
+      - ./env/mysql.env
+    networks:
+      - app-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/my.cnf:/etc/mysql/conf.d/my-custom.cnf:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "novi","--password=novi"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+  backend:
+    build: ./backend
+    container_name: sajt-back
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./env/backend.env
+    networks:
+      - app-network
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends on:
+      mysql:
+        condition: service_healthy
+  frontend:
+    build: ./frontend
+    container_name: sajt-front
+    ports:
+      - "5000:3000"
+    networks:
+      - app-network
+    volumes:
+      - ./frontend:/app
+      - ./node_modules
+    depends_on:
+      backend:
+  networks:
+    app-network:
+      driver: bridge
+  volumes:
+    mysql-data:
+      
