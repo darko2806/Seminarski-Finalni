@@ -1,0 +1,54 @@
+const express = require('express');
+const mysql = require('mysql');
+const cors = require('cors');
+const app = express();
+const port = 3001;
+
+// Middleware
+app.use(express.json());
+app.use(cors());
+
+// MySQL connection
+const connection = mysql.createConnection({
+  host: 'baza-db',
+  user: 'root',
+  password: 'password',
+  database: 'mydatabase'
+});
+
+connection.connect(err => {
+  if (err) throw err;
+  console.log('Connected to the database.');
+
+  const createTableSql = `
+    CREATE TABLE IF NOT EXISTS Putnici (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      first_name VARCHAR(100) NOT NULL,
+      last_name VARCHAR(100) NOT NULL,
+      email VARCHAR(100) NOT NULL
+    )
+  `;
+
+  connection.query(createTableSql, (err, result) => {
+    if (err) throw err;
+    console.log('Table `Putnici` is ready.');
+  });
+});
+
+// Endpoint za dodavanje korisnika
+app.post('/putnici', (req, res) => {
+  const { first_name, last_name, email } = req.body;
+  const query = 'INSERT INTO Putnici (first_name, last_name, email) VALUES (?, ?, ?)';
+  connection.query(query, [first_name, last_name, email], (error, results) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send('Server error');
+    } else {
+      res.status(201).send(`Putnik dodat u bazu sa ID-em: ${results.insertId}`);
+    }
+  });
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
