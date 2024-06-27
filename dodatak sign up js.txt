@@ -15,3 +15,6 @@ fetch('http://localhost:3001/putnici', {
       .catch((error) => {
         console.error('Error:', error);
       });
+
+Line 18:30:  'newUser' is not defined  no-undef
+sajt-front  |   Line 22:29:  'newUser' is not defined  no-undef
