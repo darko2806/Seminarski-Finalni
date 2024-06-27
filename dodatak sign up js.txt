@@ -1,0 +1,17 @@
+fetch('http://localhost:3001/putnici', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newUser)
+      })
+      .then(response => response.json())
+      .then(data => {
+        setUsers([...users, newUser]);
+        setEmail('');
+        setFirstName('');
+        setLastName('');
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
